@@ -23,19 +23,25 @@ function initiateApp() {
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
-	$('#gallery').sortable();
+	$('#gallery').sortable(stop : refresh());
 	makeGallery(pictures);
 	addModalCloseHandler();
+//	refresh();
 }
+// function refresh() {
+// updatedArray = [];
+
+// }
 function makeGallery(imageArray) {
 	//use loops and jquery dom creation to make the html structure inside the #gallery section
 	for (var i = 0; i < imageArray.length; i++) {
 		// var findGallery = $('#gallery').find('.imageGallery').clone();
 		// var assignedGallery = findGallery.
 		// $('#gallery').append(assignedGallery);
-		var assignedImgTag = $('<img>').attr('src', imageArray[i]);
-		assignedImgTag.addClass('imageGallery col-xs-12 col-sm-6 col-md-4');
-		$('#gallery').append(assignedImgTag);
+		var figureTag = $('<figure>').addClass('imageGallery col-xs-12 col-sm-6 col-md-4').css('background-image', 'url(' + imageArray[i] + ')');
+		var figureCaption = $('<figcaption>').text(imageArray[i]);
+		$(figureTag).append(figureCaption);
+		$('#gallery').append(figureTag);
 	}
 	//debugger;
 	$('.imageGallery').click(displayImage);
@@ -60,15 +66,19 @@ function addModalCloseHandler() {
 	$('.modal-body').find('img').click(hideTheModal);
 }
 
-function displayImage() {
-	var imageSource = $(this).attr('src');
+function displayImage(event) {
+	var imageSource = $(this).css('background-image');
+	var path  = event.currentTarget.innerText;
+	//console.log(imageSource)
 	//This references anything you clicks event in this context.
-	var modalText = imageSource.substr(7);
+	var firstSplice = imageSource.lastIndexOf('/');
+	var lastSplice = imageSource.lastIndexOf('.')
+	var cutPath = imageSource.slice(firstSplice + 1, lastSplice);
 	//sub string cuts off the beginning of your string
-	// console.log(imageSource);
+	//console.log(path);
 	// console.log(modalText);
-	$('.modal-title').text(modalText);
-	$('.modal-body').find('img').attr('src', imageSource);
+	$('.modal-title').text(cutPath);
+	$('.modal-body').find('img').attr('src', path);
 	$('#galleryModal').modal();
 
 
